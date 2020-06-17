@@ -1,0 +1,21 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: podinfo
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: podinfo
+  ingressRef:
+    apiVersion: networking.k8s.io/v1beta1
+    kind: Ingress
+    name: podinfo
+  service:
+    port: 80
+    targetPort: 9898
+  analysis:
+    # Blue Green: https://docs.flagger.app/tutorials/kubernetes-blue-green
+    interval: 30s
+    iterations: 5
+    threshold: 2

@@ -1,0 +1,51 @@
+repositories:
+  - name: stable
+    url: https://kubernetes-charts.storage.googleapis.com
+  - name: flagger
+    url: https://flagger.app
+  - name: podinfo
+    url: https://stefanprodan.github.io/podinfo
+
+releases:
+  # https://github.com/helm/charts/tree/master/stable/nginx-ingress
+  - name: nginx-ingress
+    chart: stable/nginx-ingress
+    values:
+      - controller:
+          replicaCount: 1
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              memory: 64Mi
+          service:
+            type: NodePort
+            nodePorts:
+              http: 30080
+        defaultBackend:
+          replicaCount: 1
+          resources:
+            limits:
+              memory: 16Mi
+            requests:
+              memory: 16Mi
+
+  # https://github.com/weaveworks/flagger/tree/master/charts/flagger
+  - name: flagger
+    chart: flagger/flagger
+    values:
+      - meshProvider: nginx
+        slack:
+          url: {{ env "SLACK_WEBHOOK" | quote }}
+          channel: {{ env "SLACK_CHANNEL" | quote }}
+
+  # https://github.com/stefanprodan/podinfo/tree/master/charts/podinfo
+  - name: podinfo
+    chart: podinfo/podinfo
+    values:
+      - replicaCount: 10
+        ingress:
+          enabled: true
+          path: /
+          hosts:
+            - podinfo-127-0-0-1.nip.io
