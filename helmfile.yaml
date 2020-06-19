@@ -22,6 +22,11 @@ releases:
             type: NodePort
             nodePorts:
               http: 30080
+          metrics:
+            enabled: true
+          podAnnotations:
+            prometheus.io/scrape: true
+            prometheus.io/port: 10254
         defaultBackend:
           replicaCount: 1
           resources:
@@ -35,6 +40,8 @@ releases:
     chart: flagger/flagger
     values:
       - meshProvider: nginx
+        prometheus:
+          install: true
         slack:
           url: {{ env "SLACK_WEBHOOK" | quote }}
           channel: {{ env "SLACK_CHANNEL" | quote }}

@@ -14,8 +14,19 @@ spec:
   service:
     port: 80
     targetPort: 9898
+  progressDeadlineSeconds: 60
   analysis:
-    # Blue Green: https://docs.flagger.app/tutorials/kubernetes-blue-green
-    interval: 30s
-    iterations: 5
+    interval: 10s
     threshold: 2
+    ## blue-green
+    ## https://docs.flagger.app/tutorials/kubernetes-blue-green
+    # iterations: 3
+    ## canary
+    ## https://docs.flagger.app/tutorials/nginx-progressive-delivery
+    maxWeight: 50
+    stepWeight: 5
+    metrics:
+    - name: request-success-rate
+      thresholdRange:
+        min: 99
+      interval: 1m
